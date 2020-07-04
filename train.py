@@ -129,15 +129,17 @@ def train(train_loader, model, criterion, optimizer, epoch, cur_lr):
 
     end = time.time()
 
-    for i, (input, target) in enumerate(train_loader):
+    for i, (i_frame_gathered_input, mv_gathered_input, res_gathered_input, label) in enumerate(train_loader):
 
         data_time.update(time.time() - end)
 
-        target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input)
+        target = target.cuda(non-blocking=True)
+        i_frame_gathered_input_var = torch.autograd.Variable(i_frame_gathered_input)
+        mv_gathered_input_var = torch.autograd.Variable(mv_gathered_input)
+        res_gathered_input_var = torch.autograd.Variable(res_gathered_input)
         target_var = torch.autograd.Variable(target)
 
-        output = model(input_var)
+        output = model(i_frame_gathered_input_var, mv_gathered_input_var, res_gathered_input_var)
         output = output.view((-1, args.num_segments) + output.size()[1:])
         output = torch.mean(output, dim=1)
 
